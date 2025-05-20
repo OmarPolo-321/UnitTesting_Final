@@ -10,7 +10,7 @@ namespace PracticaGestionEstudiantes.Test
     public class GetStudentStatus_HasReprobred_NotaMenor0
     {
         [Fact]
-        public void GetStudentStatus_NotaMenor0_ReturnsReprobado()
+        public void GetStudentStatus_NotaMenor0_ReturnsReprobado_UsandoStub()
         {
             // Arrange
             EstudentController controller = new EstudentController(new StudentServiceStub());
@@ -59,6 +59,26 @@ namespace PracticaGestionEstudiantes.Test
             Assert.Equal(123456, estudiante.CI);
             Assert.Equal("Javier", estudiante.Nombre);
             Assert.Equal(-1, estudiante.Nota);
+        }
+
+        // Para mejorar el Coverage
+        [Fact]
+        public void GetStudentStatus_NotaMenor0_ReturnsReprobado()
+        {
+            // Arrange
+            // var studentService = new StudentService();
+            // var controller = new EstudentController(studentService);
+            EstudentController controller = new EstudentController(new StudentService());
+            Estudiante estudiante = new Estudiante { CI = 123456, Nombre = "Javier", Nota = -1 };
+
+            // Act
+            var result = controller.GetStudentStatus(estudiante);
+
+            // Assert
+            Assert.Equal("Reprobado", result);
+            Assert.Equal(-1, estudiante.Nota);
+            Assert.Equal(123456, estudiante.CI);
+            Assert.Equal("Javier", estudiante.Nombre);
         }
     }
 }

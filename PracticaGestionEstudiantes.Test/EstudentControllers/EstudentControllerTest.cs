@@ -4,13 +4,14 @@ using PracticaGestionEstudiantes.Models;
 using PracticaGestionEstudiantes.Services;
 using PracticaGestionEstudiantes.Test.Stubs;
 using Moq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PracticaGestionEstudiantes.Test.EstudentControllers
 {
     public class EstudentControllerTest
     {
         [Fact]
-        public void GetStudentStatus_HasApprobed()
+        public void GetStudentStatus_HasApprobed_UsandoStub()
         {
             // Arrange
             // var studentService = new StudentService();
@@ -32,11 +33,11 @@ namespace PracticaGestionEstudiantes.Test.EstudentControllers
             Assert.Equal(60, estudiante.Nota);
             Assert.Equal(123, estudiante.CI);
             Assert.Equal("Juan", estudiante.Nombre);
-            
+
             //Assert.Equal("Reprobado", result);
         }
         [Fact]
-        public void GetStudentStatus_HasNotApprobed()
+        public void GetStudentStatus_HasNotApprobed_UsandoStub()
         {
             // Arrange
             EstudentController controller = new EstudentController(new StudentServiceStub());
@@ -80,6 +81,7 @@ namespace PracticaGestionEstudiantes.Test.EstudentControllers
 
 
         //Ejemplo de prueba de la función GetAllStudents
+        //Para mejorar el Coverage
         [Fact]
         public void GetAllStudents()
         {
@@ -95,6 +97,54 @@ namespace PracticaGestionEstudiantes.Test.EstudentControllers
             Assert.Equal(60, result[0].Nota);
             Assert.Equal(51, result[1].Nota);
             Assert.Equal(5, result.Count);
+        }
+
+        [Fact]
+        public void GetStudentStatus_HasApprobed()
+        {
+            // Arrange
+            var studentService = new StudentService();
+            var controller = new EstudentController(studentService);
+            Estudiante estudiante = new Estudiante { CI = 123, Nombre = "Juan", Nota = 60 };
+
+            // Act
+            var result = controller.GetStudentStatus(estudiante);
+
+            // Assert
+            Assert.Equal("Aprobado", result);
+            Assert.Equal(60, estudiante.Nota);
+            Assert.Equal(123, estudiante.CI);
+            Assert.Equal("Juan", estudiante.Nombre);
+        }
+        [Fact]
+        public void GetStudentStatus_HasNotApprobed()
+        {
+            // Arrange
+            var studentService = new StudentService();
+            var controller = new EstudentController(studentService);
+            Estudiante estudiante = new Estudiante { CI = 789, Nombre = "Pablo", Nota = 40 };
+
+            // Act
+            var result = controller.GetStudentStatus(estudiante);
+
+            // Assert
+            Assert.Equal("Reprobado", result);
+            Assert.Equal(789, estudiante.CI);
+            Assert.Equal("Pablo", estudiante.Nombre);
+            Assert.Equal(40, estudiante.Nota);
+        }
+        [Fact]
+        public void GetAllStudents_ReturnsEmptyList_WhenNoStudentsAdded()
+        {
+            // Arrange
+            var service = new StudentService();
+
+            // Act
+            var result = service.GetAllStudents();
+
+            // Assert
+            Assert.NotNull(result); // La lista no debe ser null
+            Assert.Empty(result);   // La lista debe estar vacía al inicio
         }
     }
 }
